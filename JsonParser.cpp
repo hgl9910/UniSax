@@ -23,16 +23,20 @@ bool JsonParser::Parse(std::istream& input)
 
     m_pos = 0;
 
-    // bisherige Parse-Logik
+    if (!OnEvent({ JsonInfo::Type::StartDocument, {}, {} }))
+        return false;
 
-    m_pos = 0;
     SkipWhitespace();
 
     if (!ParseValue())
         return false;
 
     SkipWhitespace();
-    return End();
+
+    if (!End())
+        return false;
+
+    return OnEvent({ JsonInfo::Type::EndDocument, {}, {} });
 }
 
 bool CJsonParser::ParseValue(const std::string& name)
