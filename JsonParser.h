@@ -1,16 +1,19 @@
+#pragma once
 
-class CJsonParser
+#include "JsonInfo.h"
+#include "BasicSaxParser.h"
+
+#include <istream>
+#include <string>
+
+class JsonParser : public BasicSaxParser<JsonInfo>
 {
 public:
-    virtual ~CJsonReader() = default;
+    using BasicSaxParser<JsonInfo>::BasicSaxParser;
 
-   bool Parse();
-
-protected:
-    virtual bool ReadField(const json_info& info) = 0;
+    bool Parse(std::istream& input);
 
 private:
-    std::ifstream m_file;
     std::string m_data;
     std::size_t m_pos = 0;
 
@@ -26,7 +29,7 @@ private:
     char Current() const;
     bool Consume(char c);
 
-    bool Emit(json_info::Type type,
+    bool Emit(JsonInfo::Type type,
               const std::string& name = {},
               const std::string& value = {});
 
