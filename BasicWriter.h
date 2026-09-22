@@ -4,9 +4,25 @@ class BasicWriter
 public:
     virtual ~BasicWriter() = default;
 
-    bool Write(const std::string& filename);
-    bool Write(std::ostream& output);
+   
+	    // filename
+    bool Write(const std::string& filename)
+    {
+        std::ofstream output(filename);
+        if (!output)
+            return false;
+
+        return WriteStream(output);
+    }
+ 
+	
+	
+    bool Write(std::ostream& output)
+	{
+		return WriteStream(output);	
+	}
 
 protected:
     virtual bool WriteStream(std::ostream& output) = 0;
 };
+
