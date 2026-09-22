@@ -23,7 +23,7 @@ bool JsonParser::Parse(std::istream& input)
 
     m_pos = 0;
 
-    if (!OnEvent({ JsonInfo::Type::StartDocument, {}, {} }))
+    if (!OnEvent({ JsonInfo::Type::DocumentBegin, {}, {} }))
         return false;
 
     SkipWhitespace();
@@ -36,10 +36,10 @@ bool JsonParser::Parse(std::istream& input)
     if (!End())
         return false;
 
-    return OnEvent({ JsonInfo::Type::EndDocument, {}, {} });
+    return OnEvent({ JsonInfo::Type::DocumentEnd, {}, {} });
 }
 
-bool CJsonParser::ParseValue(const std::string& name)
+bool JsonParser::ParseValue(const std::string& name)
 {
     SkipWhitespace();
 
@@ -49,25 +49,25 @@ bool CJsonParser::ParseValue(const std::string& name)
     switch (Current())
     {
     case '{':
-        if (!Emit(json_info::Type::ObjectBegin, name))
+        if (!Emit(JsonInfo::Type::ObjectBegin, name))
             return false;
         if (!ParseObject())
             return false;
-        return Emit(json_info::Type::ObjectEnd);
+        return Emit(JsonInfo::Type::ObjectEnd);
 
     case '[':
-        if (!Emit(json_info::Type::ArrayBegin, name))
+        if (!Emit(JsonInfo::Type::ArrayBegin, name))
             return false;
         if (!ParseArray())
             return false;
-        return Emit(json_info::Type::ArrayEnd);
+        return Emit(JsonInfo::Type::ArrayEnd);
 
     case '"':
     {
         std::string value;
         if (!ParseString(value))
             return false;
-        return Emit(json_info::Type::String, name, value);
+        return Emit(JsonInfo::Type::String, name, value);
     }
 
     case 't':
@@ -76,7 +76,7 @@ bool CJsonParser::ParseValue(const std::string& name)
         std::string value;
         if (!ParseLiteral(value))
             return false;
-        return Emit(json_info::Type::Boolean, name, value);
+        return Emit(JsonInfo::Type::Boolean, name, value);
     }
 
     case 'n':
@@ -86,7 +86,7 @@ bool CJsonParser::ParseValue(const std::string& name)
             return false;
         if (value != "null")
             return false;
-        return Emit(json_info::Type::Null, name);
+        return Emit(JsonInfo::Type::Null, name);
     }
 
     default:
@@ -95,13 +95,13 @@ bool CJsonParser::ParseValue(const std::string& name)
             std::string value;
             if (!ParseNumber(value))
                 return false;
-            return Emit(json_info::Type::Number, name, value);
+            return Emit(JsonInfo::Type::Number, name, value);
         }
         return false;
     }
 }
 
-bool CJsonParser::ParseObject()
+bool JsonParser::ParseObject()
 {
     if (!Consume('{'))
         return false;
@@ -142,7 +142,7 @@ bool CJsonParser::ParseObject()
     return false;
 }
 
-bool CJsonParser::ParseArray()
+bool JsonParser::ParseArray()
 {
     if (!Consume('['))
         return false;
@@ -169,7 +169,7 @@ bool CJsonParser::ParseArray()
     return false;
 }
 
-bool CJsonParser::ParseString(std::string& result)
+bool JsonParser::ParseString(std::string& result)
 {
     result.clear();
 
@@ -274,7 +274,7 @@ bool CJsonParser::ParseString(std::string& result)
     return false;
 }
 
-bool CJsonParser::ParseNumber(std::string& result)
+bool JsonParser::ParseNumber(std::string& result)
 {
     const std::size_t start = m_pos;
 
@@ -325,7 +325,7 @@ bool CJsonParser::ParseNumber(std::string& result)
     return true;
 }
 
-bool CJsonParser::ParseLiteral(std::string& result)
+bool JsonParser::ParseLiteral(std::string& result)
 {
     const std::size_t start = m_pos;
 
@@ -339,7 +339,7 @@ bool CJsonParser::ParseLiteral(std::string& result)
            result == "null";
 }
 
-void CJsonParser::SkipWhitespace()
+void JsonParser::SkipWhitespace()
 {
     while (!End() &&
            (Current() == ' ' ||
@@ -351,17 +351,17 @@ void CJsonParser::SkipWhitespace()
     }
 }
 
-bool CJsonParser::End() const
+bool JsonParser::End() const
 {
     return m_pos >= m_data.size();
 }
 
-char CJsonParser::Current() const
+char JsonParser::Current() const
 {
     return End() ? '\0' : m_data[m_pos];
 }
 
-bool CJsonParser::Consume(char c)
+bool JsonParser::Consume(char c)
 {
     if (!End() && Current() == c)
     {
@@ -372,11 +372,11 @@ bool CJsonParser::Consume(char c)
     return false;
 }
 
-bool CJsonParser::Emit(json_info::Type type,
+bool JsonParser::Emit(JsonInfo::Type type,
                        const std::string& name,
                        const std::string& value)
 {
-    json_info info;
+    JsonInfo info;
     info.type = type;
     info.name = name;
     info.value = value;
@@ -384,7 +384,7 @@ bool CJsonParser::Emit(json_info::Type type,
     return ReadField(info);
 }
 
-bool CJsonParser::IsNumberChar(char c)
+bool JsonParser::IsNumberChar(char c)
 {
     return IsDigit(c) ||
            c == '-' ||
@@ -394,14 +394,14 @@ bool CJsonParser::IsNumberChar(char c)
            c == 'E';
 }
 
-bool CJsonParser::IsHexDigit(char c)
+bool JsonParser::IsHexDigit(char c)
 {
     return IsDigit(c) ||
            (c >= 'a' && c <= 'f') ||
            (c >= 'A' && c <= 'F');
 }
 
-unsigned CJsonParser::HexValue(char c)
+unsigned JsonParser::HexValue(char c)
 {
     if (c >= '0' && c <= '9')
         return static_cast<unsigned>(c - '0');
@@ -412,7 +412,7 @@ unsigned CJsonParser::HexValue(char c)
     return static_cast<unsigned>(c - 'A' + 10);
 }
 
-void CJsonParser::AppendUtf8(std::string& out, unsigned cp)
+void JsonParser::AppendUtf8(std::string& out, unsigned cp)
 {
     if (cp <= 0x7F)
     {
