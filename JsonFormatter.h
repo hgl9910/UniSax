@@ -1,17 +1,7 @@
 #pragma once
 
-#include "JsonInfo.h"
-#include "BasicSaxFormatter.h"
-
-#include <ostream>
-#include <string>
-#include <string_view>
-#include <vector>
-
-#pragma once
-
-#include "JsonInfo.h"
 #include "BasicFormatter.h"
+#include "JsonInfo.h"
 
 #include <ostream>
 #include <string>
@@ -56,14 +46,18 @@ private:
     bool WriteField(const std::string& name, int value);
     bool WriteField(const std::string& name, unsigned value);
     bool WriteField(const std::string& name, long long value);
+
     bool WriteField(const std::string& name,
                     unsigned long long value);
+
     bool WriteField(const std::string& name, double value);
     bool WriteField(const std::string& name, bool value);
 
     bool WriteNull(const std::string& name);
 
     bool WriteString(const std::string& value);
+
+    bool WriteNumber(const std::string& value);
 
     bool WriteNumber(const std::string& name,
                      const std::string& value);

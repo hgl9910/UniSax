@@ -1,4 +1,3 @@
-```cpp
 #pragma once
 
 #include "BasicWriter.h"
@@ -26,14 +25,22 @@ public:
     bool BeginArray(const std::string& name = {});
     bool EndArray();
 
-    bool WriteField(const std::string& name, const std::string& value);
-    bool WriteField(const std::string& name, std::string_view value);
-    bool WriteField(const std::string& name, const char* value);
+    bool WriteField(const std::string& name,
+                    const std::string& value);
+
+    bool WriteField(const std::string& name,
+                    std::string_view value);
+
+    bool WriteField(const std::string& name,
+                    const char* value);
+
     bool WriteField(const std::string& name, int value);
     bool WriteField(const std::string& name, unsigned value);
     bool WriteField(const std::string& name, long long value);
+
     bool WriteField(const std::string& name,
                     unsigned long long value);
+
     bool WriteField(const std::string& name, double value);
     bool WriteField(const std::string& name, bool value);
 
@@ -55,4 +62,3 @@ private:
     std::ostream* m_output = nullptr;
     std::unique_ptr<JsonFormatter> m_formatter;
 };
-```

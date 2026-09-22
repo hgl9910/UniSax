@@ -1,3 +1,6 @@
+```cpp
+#pragma once
+
 template<class Info>
 class BasicFormatter
 {
@@ -6,4 +9,4 @@ public:
 
     virtual bool Format(const Info& info) = 0;
 };
-
+```

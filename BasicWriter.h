@@ -12,12 +12,15 @@ public:
 
     bool Write(const std::string& filename)
     {
-        std::ofstream output(filename);
+        m_file.close();
+        m_file.clear();
 
-        if (!output)
+        m_file.open(filename);
+
+        if (!m_file)
             return false;
 
-        return Write(output);
+        return WriteStream(m_file);
     }
 
     bool Write(std::ostream& output)
@@ -28,8 +31,8 @@ public:
 protected:
     virtual bool WriteStream(std::ostream& output) = 0;
 
-    virtual bool BeginDocument(std::ostream& output) = 0;
-    virtual bool EndDocument() = 0;
-
     virtual bool OnEvent(const Info& info) = 0;
+
+private:
+    std::ofstream m_file;
 };

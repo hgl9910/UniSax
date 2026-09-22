@@ -1,22 +1,20 @@
-
 #include "JsonFormatter.h"
 
 #include <iomanip>
 #include <sstream>
-
 
 JsonFormatter::JsonFormatter(std::ostream& output)
     : m_output(output)
 {
 }
 
-
 bool JsonFormatter::Format(const JsonInfo& info)
 {
     switch (info.type)
     {
     case JsonInfo::Type::DocumentBegin:
-        return true;
+        m_stack.clear();
+        return static_cast<bool>(m_output);
 
     case JsonInfo::Type::DocumentEnd:
         return static_cast<bool>(m_output);
@@ -40,6 +38,9 @@ bool JsonFormatter::Format(const JsonInfo& info)
         return WriteField(info.name, info.value);
 
     case JsonInfo::Type::Number:
+        if (info.name.empty())
+            return WriteNumber(info.value);
+
         return WriteNumber(info.name, info.value);
 
     case JsonInfo::Type::Boolean:
@@ -58,7 +59,6 @@ bool JsonFormatter::Format(const JsonInfo& info)
     return false;
 }
 
-
 bool JsonFormatter::BeginObject(const std::string& name)
 {
     BeforeValue(name);
@@ -71,7 +71,6 @@ bool JsonFormatter::BeginObject(const std::string& name)
     return static_cast<bool>(m_output);
 }
 
-
 bool JsonFormatter::EndObject()
 {
     if (m_stack.empty() ||
@@ -81,6 +80,7 @@ bool JsonFormatter::EndObject()
     }
 
     const bool first = m_stack.back().first;
+
     m_stack.pop_back();
 
     if (!first)
@@ -94,7 +94,6 @@ bool JsonFormatter::EndObject()
     return static_cast<bool>(m_output);
 }
 
-
 bool JsonFormatter::BeginArray(const std::string& name)
 {
     BeforeValue(name);
@@ -107,7 +106,6 @@ bool JsonFormatter::BeginArray(const std::string& name)
     return static_cast<bool>(m_output);
 }
 
-
 bool JsonFormatter::EndArray()
 {
     if (m_stack.empty() ||
@@ -117,6 +115,7 @@ bool JsonFormatter::EndArray()
     }
 
     const bool first = m_stack.back().first;
+
     m_stack.pop_back();
 
     if (!first)
@@ -130,7 +129,6 @@ bool JsonFormatter::EndArray()
     return static_cast<bool>(m_output);
 }
 
-
 bool JsonFormatter::WriteField(const std::string& name,
                                const std::string& value)
 {
@@ -143,13 +141,11 @@ bool JsonFormatter::WriteField(const std::string& name,
     return static_cast<bool>(m_output);
 }
 
-
 bool JsonFormatter::WriteField(const std::string& name,
                                std::string_view value)
 {
     return WriteField(name, std::string(value));
 }
-
 
 bool JsonFormatter::WriteField(const std::string& name,
                                const char* value)
@@ -159,45 +155,49 @@ bool JsonFormatter::WriteField(const std::string& name,
         std::string(value ? value : ""));
 }
 
-
 bool JsonFormatter::WriteField(const std::string& name,
                                int value)
 {
-    return WriteNumber(name, std::to_string(value));
+    return WriteNumber(
+        name,
+        std::to_string(value));
 }
-
 
 bool JsonFormatter::WriteField(const std::string& name,
                                unsigned value)
 {
-    return WriteNumber(name, std::to_string(value));
+    return WriteNumber(
+        name,
+        std::to_string(value));
 }
-
 
 bool JsonFormatter::WriteField(const std::string& name,
                                long long value)
 {
-    return WriteNumber(name, std::to_string(value));
+    return WriteNumber(
+        name,
+        std::to_string(value));
 }
-
 
 bool JsonFormatter::WriteField(
     const std::string& name,
     unsigned long long value)
 {
-    return WriteNumber(name, std::to_string(value));
+    return WriteNumber(
+        name,
+        std::to_string(value));
 }
-
 
 bool JsonFormatter::WriteField(const std::string& name,
                                double value)
 {
     std::ostringstream out;
-    out << std::setprecision(17) << value;
+
+    out << std::setprecision(17)
+        << value;
 
     return WriteNumber(name, out.str());
 }
-
 
 bool JsonFormatter::WriteField(const std::string& name,
                                bool value)
@@ -209,7 +209,6 @@ bool JsonFormatter::WriteField(const std::string& name,
     return static_cast<bool>(m_output);
 }
 
-
 bool JsonFormatter::WriteNull(const std::string& name)
 {
     BeforeValue(name);
@@ -218,7 +217,6 @@ bool JsonFormatter::WriteNull(const std::string& name)
 
     return static_cast<bool>(m_output);
 }
-
 
 bool JsonFormatter::WriteString(const std::string& value)
 {
@@ -231,6 +229,14 @@ bool JsonFormatter::WriteString(const std::string& value)
     return static_cast<bool>(m_output);
 }
 
+bool JsonFormatter::WriteNumber(const std::string& value)
+{
+    BeforeValue();
+
+    m_output << value;
+
+    return static_cast<bool>(m_output);
+}
 
 bool JsonFormatter::WriteNumber(const std::string& name,
                                 const std::string& value)
@@ -242,7 +248,6 @@ bool JsonFormatter::WriteNumber(const std::string& name,
     return static_cast<bool>(m_output);
 }
 
-
 bool JsonFormatter::WriteBool(bool value)
 {
     BeforeValue();
@@ -252,7 +257,6 @@ bool JsonFormatter::WriteBool(bool value)
     return static_cast<bool>(m_output);
 }
 
-
 bool JsonFormatter::WriteNull()
 {
     BeforeValue();
@@ -261,7 +265,6 @@ bool JsonFormatter::WriteNull()
 
     return static_cast<bool>(m_output);
 }
-
 
 void JsonFormatter::BeforeValue(const std::string& name)
 {
@@ -285,7 +288,6 @@ void JsonFormatter::BeforeValue(const std::string& name)
     ctx.first = false;
 }
 
-
 void JsonFormatter::Indent()
 {
     const std::size_t level = m_stack.size();
@@ -294,10 +296,10 @@ void JsonFormatter::Indent()
         m_output << "    ";
 }
 
-
 std::string JsonFormatter::Escape(const std::string& value)
 {
     std::string result;
+
     result.reserve(value.size());
 
     for (unsigned char c : value)
@@ -346,6 +348,7 @@ std::string JsonFormatter::Escape(const std::string& value)
             {
                 result += static_cast<char>(c);
             }
+
             break;
         }
     }
