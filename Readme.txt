@@ -49,6 +49,7 @@ Aktueller stand Json:
 | JsonReader.h   	 | OK 
 | JsonReader.cpp     | OK 
 | BasicFormatter.h   | OK 
+| BasicReader.h      | OK 
 | BasicWriter.h      | OK 
 | JsonFormatter.h    | OK 
 | JsonFormatter.cpp  | OK 
