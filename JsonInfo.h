@@ -1,11 +1,12 @@
 
-class JsonParser;
-
-struct json_info
+class JsonFormatter;
+class JsonInfo
 {
-    using Parser = JsonParser;
 
-};
+public:
+    using Parser    = JsonParser;
+    using Formatter = JsonFormatter;
+
     enum class Type
     {
         ObjectBegin,
