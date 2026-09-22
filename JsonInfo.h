@@ -1,5 +1,7 @@
 
+class JsonParser;
 class JsonFormatter;
+
 class JsonInfo
 {
 
