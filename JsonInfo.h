@@ -1,5 +1,11 @@
+
+class JsonParser;
+
 struct json_info
 {
+    using Parser = JsonParser;
+
+};
     enum class Type
     {
         ObjectBegin,
@@ -16,3 +22,5 @@ struct json_info
     std::string name;
     std::string value;
 };
+
+
