@@ -36,3 +36,20 @@ JsonWriter.h/.cpp
 JsonFormatter.h/.cpp
 
 // ---------------- weitere --------------
+
+
+Aktueller stand Json:
+
+| Datei              | Zustand 
+|------------------- | -------------------
+| BasicSaxParser.h   | OK 
+| JsonInfo.h         | Ok 
+| JsonParser.h       | OK 
+| JsonParser.cpp     | OK 
+| JsonReader.h   	 | OK 
+| JsonReader.cpp     | OK 
+| BasicFormatter.h   | vorhanden 
+| BasicWriter.h      | noch nicht vorhanden 
+
+
+Aktueller stand  XML : noch nicht im Repository
