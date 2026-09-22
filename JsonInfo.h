@@ -9,6 +9,8 @@ public:
 
     enum class Type
     {
+		DocumentBegin,
+		DocumentEnd,
         ObjectBegin,
         ObjectEnd,
         ArrayBegin,
