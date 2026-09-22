@@ -6,3 +6,4 @@ public:
 
     virtual bool Format(const Info& info) = 0;
 };
+
