@@ -1,6 +1,7 @@
 
 class JsonParser;
 class JsonFormatter;
+#include <string>
 
 class JsonInfo
 {
