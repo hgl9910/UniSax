@@ -1,0 +1,32 @@
+#pragma once
+class JsonParser;
+class JsonFormatter;
+#include <string>
+
+class JsonInfo
+{
+
+public:
+    using Parser    = JsonParser;
+    using Formatter = JsonFormatter;
+
+    enum class Type
+    {
+		DocumentBegin,
+		DocumentEnd,
+        ObjectBegin,
+        ObjectEnd,
+        ArrayBegin,
+        ArrayEnd,
+        String,
+        Number,
+        Boolean,
+        Null
+    };
+
+    Type type = Type::Null;
+    std::string name;
+    std::string value;
+};
+
+
