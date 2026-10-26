@@ -6,4 +6,7 @@
 extern const std::vector<PdfMap> MapDocument1;
 extern const std::vector<PdfMap> MapDocument2;
 extern const std::vector<PdfMap> MapDocument3;
+extern const std::vector<PdfMap> MapDocument4;
+extern const std::vector<PdfMap> MapDocument5;
+extern const std::vector<PdfMap> MapDocument6;
 

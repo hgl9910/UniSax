@@ -1,6 +1,8 @@
 #pragma once
-#include <istream>
+#include <fstream>   // std::ifstream
 #include <filesystem>
+#include <istream>
+
 
 template<class Info>
 class BasicSaxParser;
